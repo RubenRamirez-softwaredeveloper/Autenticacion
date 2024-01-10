@@ -17,6 +17,24 @@ class Bienvenida : AppCompatActivity() {
         setContentView(binding.root)
 
         val db = FirebaseFirestore.getInstance()
+        // Añadir un nuevo coche conociendo su ID que es la matricula:
+        binding.bGuardarCoche.setOnClickListener {
+            if (binding.editTextMatricula.text.isNotEmpty() &&
+                binding.editTextMarca.text.isNotEmpty() &&
+                binding.editTextMarca.text.isNotEmpty() &&
+                binding.editTextColor.text.isNotEmpty()){
+                db.collection("coches").document(binding.editTextMatricula.text.toString())
+                    // El método set es más versátil, nos sirve para añadir y editarlos es mejor que el .add
+                    .set(mapOf(
+                        "color" to binding.editTextColor.text.toString(),
+                        "marca" to binding.editTextMarca.text.toString(),
+                        "modelo" to binding.editTextModelo.text.toString()))
+                Toast.makeText(this, "Se ha guardado satisfactoriamente", Toast.LENGTH_LONG).show()
+            }
+            else {
+                Toast.makeText(this, "Algún campo está vacío", Toast.LENGTH_LONG).show()
+            }
+        /*
         binding.bGuardarCoche.setOnClickListener {
             if (binding.editTextMatricula.text.isNotEmpty() &&
                 binding.editTextMarca.text.isNotEmpty() &&
@@ -44,7 +62,7 @@ class Bienvenida : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Algún campo está vacío", Toast.LENGTH_LONG).show()
             }
-
+            */
             binding.bCerrarSesion.setOnClickListener {
                 FirebaseAuth.getInstance().signOut()
                 // Volvemos a nuestra MainActivity:
@@ -63,7 +81,13 @@ class Bienvenida : AppCompatActivity() {
                     }
             }
 
+            // Eliminar un registro sabiendo su ID (matricula del coche):
             binding.bEliminarCoche.setOnClickListener{
+                db.collection("coches")
+                    .document(binding.editTextMatricula.text.toString())
+                    .delete()
+            }
+            /*binding.bEliminarCoche.setOnClickListener{
                 db.collection("coches")
                     .get()
                     .addOnSuccessListener { 
@@ -71,7 +95,7 @@ class Bienvenida : AppCompatActivity() {
                             it.reference.delete()
                         }
                     }
-            }
+            }*/
         }
     }
 }
